@@ -11,7 +11,9 @@ import SwiftUI
 struct ipscannerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().frame(minWidth: 700, maxWidth: .infinity, minHeight: 500, maxHeight: .infinity, alignment: .center)
         }
+        .defaultSize(width: 700, height: 500)
+                .windowResizability(.contentSize)
     }
 }
