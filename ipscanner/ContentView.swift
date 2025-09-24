@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Network
 
 struct ContentView: View {
     @State private var devices: [Device] = [
@@ -35,9 +36,7 @@ struct ContentView: View {
         ),
     ]
 
-    @State private var sortOrder: [KeyPathComparator<Device>] = [
-        .init(\.ip, order: SortOrder.forward)
-    ]
+    @State private var sortOrder: [KeyPathComparator<Device>] = [.init(\.ip, order: SortOrder.forward)]
 
     @State private var selection: Device.ID? = nil  //Set<Device.ID> = [] - multiple
     @State private var search = ""
@@ -104,7 +103,21 @@ struct ContentView: View {
         .padding()
         
     }
-    private func startScan() {}
+    private func startScan() {
+        print("Hello")
+        var _ = NetworkConnection(to: .hostPort(host: "192.168.1.250", port: 7)) {
+            TCP()
+        }.onStateUpdate { connection, state in
+            print("state update")
+            print(connection)
+            print(state)
+        }.onViabilityUpdate { connection, newViable in
+            print("viabilityUpdate")
+            print(newViable)
+        }
+        
+        
+    }
     private func pauseScan() {}
 }
 

@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct Device : Identifiable, Hashable{
+//https://stackoverflow.com/questions/79666709/swiftdata-predicate-in-swift-6-language-mode
+nonisolated struct Device : Identifiable, Hashable{
     var id = UUID()
     
     let ip: String
