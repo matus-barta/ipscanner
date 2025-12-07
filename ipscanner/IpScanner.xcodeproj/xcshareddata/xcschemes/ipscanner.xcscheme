@@ -18,7 +18,7 @@
                BlueprintIdentifier = "CA699F382E7C66D800964656"
                BuildableName = "ipscanner.app"
                BlueprintName = "ipscanner"
-               ReferencedContainer = "container:ipscanner.xcodeproj">
+               ReferencedContainer = "container:IpScanner.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,7 +47,7 @@
             BlueprintIdentifier = "CA699F382E7C66D800964656"
             BuildableName = "ipscanner.app"
             BlueprintName = "ipscanner"
-            ReferencedContainer = "container:ipscanner.xcodeproj">
+            ReferencedContainer = "container:IpScanner.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -64,7 +64,7 @@
             BlueprintIdentifier = "CA699F382E7C66D800964656"
             BuildableName = "ipscanner.app"
             BlueprintName = "ipscanner"
-            ReferencedContainer = "container:ipscanner.xcodeproj">
+            ReferencedContainer = "container:IpScanner.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

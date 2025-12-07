@@ -9,6 +9,8 @@ import SwiftUI
 import Network
 
 struct ContentView: View {
+    @EnvironmentObject var rustApp: RustAppWrapper
+    
     @State private var devices: [Device] = [
         Device(
             ip: "192.168.0.22",
@@ -44,6 +46,13 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 10) {
+            TextEditor(text: $rustSource)
+                            .font(.caption)
+                            .onReceive(Just(rustSource), perform: {sourceCode in
+                                let html = rustApp.rust.generate_html(sourceCode).toString()
+                                rustHtml = html
+                            })
+            
             Table(of: Device.self, selection: $selection, sortOrder: $sortOrder)
             {
                 TableColumn("Name", value: \.name)

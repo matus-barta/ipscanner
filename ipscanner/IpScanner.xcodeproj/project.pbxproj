@@ -6,7 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CA55E8DA2EE4EF7700EEA3E6 /* libipscanner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA55E8D92EE4EF4800EEA3E6 /* libipscanner.a */; };
+		CA55E8E02EE4F05500EEA3E6 /* ipscanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA55E8DC2EE4F05500EEA3E6 /* ipscanner.swift */; };
+		CA55E8E12EE4F05500EEA3E6 /* SwiftBridgeCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA55E8DF2EE4F05500EEA3E6 /* SwiftBridgeCore.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		CA55E8D72EE4ED4900EEA3E6 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
+		CA55E8D92EE4EF4800EEA3E6 /* libipscanner.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libipscanner.a; path = ../target/universal/debug/libipscanner.a; sourceTree = "<group>"; };
+		CA55E8DB2EE4F05500EEA3E6 /* ipscanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ipscanner.h; sourceTree = "<group>"; };
+		CA55E8DC2EE4F05500EEA3E6 /* ipscanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ipscanner.swift; sourceTree = "<group>"; };
+		CA55E8DE2EE4F05500EEA3E6 /* SwiftBridgeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SwiftBridgeCore.h; path = Generated/SwiftBridgeCore.h; sourceTree = "<group>"; };
+		CA55E8DF2EE4F05500EEA3E6 /* SwiftBridgeCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SwiftBridgeCore.swift; path = Generated/SwiftBridgeCore.swift; sourceTree = "<group>"; };
 		CA699F392E7C66D800964656 /* ipscanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ipscanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -23,17 +35,41 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA55E8DA2EE4EF7700EEA3E6 /* libipscanner.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA55E8D82EE4EF4800EEA3E6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CA55E8D92EE4EF4800EEA3E6 /* libipscanner.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CA55E8DD2EE4F05500EEA3E6 /* ipscanner */ = {
+			isa = PBXGroup;
+			children = (
+				CA55E8DB2EE4F05500EEA3E6 /* ipscanner.h */,
+				CA55E8DC2EE4F05500EEA3E6 /* ipscanner.swift */,
+			);
+			name = ipscanner;
+			path = Generated/ipscanner;
+			sourceTree = "<group>";
+		};
 		CA699F302E7C66D800964656 = {
 			isa = PBXGroup;
 			children = (
+				CA55E8DD2EE4F05500EEA3E6 /* ipscanner */,
+				CA55E8DE2EE4F05500EEA3E6 /* SwiftBridgeCore.h */,
+				CA55E8DF2EE4F05500EEA3E6 /* SwiftBridgeCore.swift */,
 				CA699F3B2E7C66D800964656 /* ipscanner */,
 				CA699F3A2E7C66D800964656 /* Products */,
+				CA55E8D72EE4ED4900EEA3E6 /* BridgingHeader.h */,
+				CA55E8D82EE4EF4800EEA3E6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -52,6 +88,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CA699F442E7C66D900964656 /* Build configuration list for PBXNativeTarget "ipscanner" */;
 			buildPhases = (
+				CA55E8D42EE4EC4A00EEA3E6 /* Run Script */,
 				CA699F352E7C66D800964656 /* Sources */,
 				CA699F362E7C66D800964656 /* Frameworks */,
 				CA699F372E7C66D800964656 /* Resources */,
@@ -85,7 +122,7 @@
 					};
 				};
 			};
-			buildConfigurationList = CA699F342E7C66D800964656 /* Build configuration list for PBXProject "ipscanner" */;
+			buildConfigurationList = CA699F342E7C66D800964656 /* Build configuration list for PBXProject "IpScanner" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -114,11 +151,35 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		CA55E8D42EE4EC4A00EEA3E6 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n./build-rust.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		CA699F352E7C66D800964656 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA55E8E02EE4F05500EEA3E6 /* ipscanner.swift in Sources */,
+				CA55E8E12EE4F05500EEA3E6 /* SwiftBridgeCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,7 +223,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -185,6 +246,7 @@
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -225,7 +287,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -240,6 +302,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
@@ -263,6 +326,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "IP Scanner";
@@ -273,6 +337,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/debug";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matusbarta.ipscanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -281,6 +346,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/BridgingHeader.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 			};
@@ -306,6 +372,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "IP Scanner";
@@ -316,6 +383,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../target/universal/release";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matusbarta.ipscanner;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -324,6 +392,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/BridgingHeader.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 			};
@@ -332,7 +401,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CA699F342E7C66D800964656 /* Build configuration list for PBXProject "ipscanner" */ = {
+		CA699F342E7C66D800964656 /* Build configuration list for PBXProject "IpScanner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA699F422E7C66D900964656 /* Debug */,
