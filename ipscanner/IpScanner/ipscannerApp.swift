@@ -20,7 +20,7 @@ struct ipscannerApp: App {
     }
 }
 
-class RustAppWrapper: ObservableObject {
+class RustAppWrapper: ObservableObject {    
     @Published var rust: RustApp
 
     init (rust: RustApp) {

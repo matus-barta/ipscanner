@@ -9,7 +9,7 @@ import SwiftUI
 import Network
 
 struct ContentView: View {
-    @EnvironmentObject var rustApp: RustAppWrapper
+    @StateObject var rustApp = RustAppWrapper(rust: <#RustApp#>)
     
     @State private var devices: [Device] = [
         Device(
