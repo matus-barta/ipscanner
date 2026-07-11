@@ -7,13 +7,27 @@
 
 import Foundation
 
-//https://stackoverflow.com/questions/79666709/swiftdata-predicate-in-swift-6-language-mode
-nonisolated struct Device : Identifiable, Hashable{
-    var id = UUID()
-    
+/// https://stackoverflow.com/questions/79666709/swiftdata-predicate-in-swift-6-language-mode
+nonisolated struct Device: Identifiable, Hashable {
+    let id = UUID()
+
     let ip: String
-    let mac: String
-    let manufacturer: String
-    let name: String
-    
+
+    var hostname: String?
+    var mac: String?
+    var manufacturer: String?
+
+    var openPorts: Set<Int> = []
+
+    var hostnameSort: String {
+        hostname ?? ""
+    }
+
+    var macSort: String {
+        mac ?? ""
+    }
+
+    var manufacturerSort: String {
+        manufacturer ?? ""
+    }
 }

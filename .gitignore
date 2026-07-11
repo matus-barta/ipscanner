@@ -1,0 +1,54 @@
+# macOS
+.DS_Store
+
+# Xcode user data
+**/xcuserdata/
+**/*.xcuserdatad
+**/*.xcuserstate
+
+# Xcode build products
+DerivedData/
+build/
+
+# Swift Package Manager
+.build/
+Packages/
+Package.resolved
+
+# Playground
+timeline.xctimeline
+playground.xcworkspace
+
+# Archives
+*.xcarchive
+
+# SourceKit
+.sourcekit-lsp/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# Tuist
+Tuist/.build
+Tuist/Dependencies
+
+# Mint
+.mint/
+
+# Periphery
+.periphery.yml
+
+# SwiftFormat cache
+.swiftformat.cache
+
+# SwiftLint cache
+.swiftlint.yml.lock

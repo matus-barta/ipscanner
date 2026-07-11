@@ -5,120 +5,84 @@
 //  Created by Matúš Barta on 18/09/2025.
 //
 
-import SwiftUI
 import Network
+import SwiftUI
 
 struct ContentView: View {
-    @State private var devices: [Device] = [
-        Device(
-            ip: "192.168.0.22",
-            mac: "22-22-22-22-22",
-            manufacturer: "Apple",
-            name: "mac.local"
-        ),
-        Device(
-            ip: "192.168.0.23",
-            mac: "22-22-22-22-23",
-            manufacturer: "Apple",
-            name: "mac2.local"
-        ),
-        Device(
-            ip: "192.168.0.23",
-            mac: "22-22-22-22-23",
-            manufacturer: "Apple",
-            name: "mac2.local"
-        ),
-        Device(
-            ip: "192.168.0.23",
-            mac: "22-22-22-22-23",
-            manufacturer: "Apple",
-            name: "mac2.local"
-        ),
-    ]
+    @State private var scanner = Scanner()
 
     @State private var sortOrder: [KeyPathComparator<Device>] = [.init(\.ip, order: SortOrder.forward)]
 
-    @State private var selection: Device.ID? = nil  //Set<Device.ID> = [] - multiple
+    @State private var selection: Device.ID? = nil // Set<Device.ID> = [] - multiple
     @State private var search = ""
-    @State private var currentValue = 0.6
+
+    @FocusState private var subnetFieldFocused: Bool
 
     var body: some View {
         VStack(spacing: 10) {
-            Table(of: Device.self, selection: $selection, sortOrder: $sortOrder)
-            {
-                TableColumn("Name", value: \.name)
-                TableColumn("IP", value: \.ip)
-                TableColumn("Mac", value: \.mac)
-                TableColumn("Manufacturer", value: \.manufacturer)
+            HStack {
+                TextField("", text: $scanner.subnets)
+                    .focused($subnetFieldFocused)
+                Button("Scan for subnets", systemImage: "arrow.trianglehead.clockwise.rotate.90",
+                       action: scanner.refreshSubnets)
+                    .labelStyle(.iconOnly)
+            }
+
+            Table(of: Device.self, selection: $selection, sortOrder: $sortOrder) {
+                TableColumn("Hostname", value: \.hostnameSort)
+                TableColumn("IP address", value: \.ip)
+                TableColumn("MAC address", value: \.macSort)
+                TableColumn("Manufacturer", value: \.manufacturerSort)
             } rows: {
-                ForEach(devices) { device in
+                ForEach(scanner.devices) { device in
                     TableRow(device)
                         .contextMenu {
-                            Button("Stuff1") {
-
-                            }
-                            Button("Stuff2") {
-
-                            }
+                            Button("Stuff1") {}
+                            Button("Stuff2") {}
                             Divider()
-                            Button(role: .destructive) {
-
-                            } label: {
+                            Button(role: .destructive) {} label: {
                                 Label("Delete", systemImage: "trash")
                             }
                         }
                 }
             }
             .onChange(of: sortOrder) {
-                devices.sort(using: sortOrder)
+                scanner.devices.sort(using: sortOrder)
             }
             .searchable(text: $search)
             .toolbar {
                 ToolbarItem {
-                    Button("Scan", systemImage: "play.fill", action: startScan)
-                    .labelStyle(.titleAndIcon)
-                    .buttonStyle(.glassProminent)
-                    .tint(.green)
+                    Button("Scan", systemImage: "play.fill", action: scanner.startScan)
+                        .labelStyle(.titleAndIcon)
+                        .buttonStyle(.glassProminent)
+                        .keyboardShortcut(.defaultAction)
                 }
-                ToolbarSpacer(.fixed)
                 ToolbarItem {
                     Button(
                         "Pause",
                         systemImage: "pause.fill",
-                        action: pauseScan
+                        action: scanner.pauseScan
                     )
                     .disabled(true)
                 }
-
             }
 
-            Gauge(value: currentValue, in: 0.0...1.0) {
+            Gauge(value: scanner.progress, in: 0.0 ... 1.0) {
                 Text("Scanning")
             } currentValueLabel: {
-                Text("\(Int(currentValue*100)) out of 100")
+                Text("\(Int(scanner.progress * 100)) out of 100")
             }.gaugeStyle(
                 .accessoryLinearCapacity
             )
         }
         .padding()
-        
-    }
-    private func startScan() {
-        print("Hello")
-        var _ = NetworkConnection(to: .hostPort(host: "192.168.1.250", port: 7)) {
-            TCP()
-        }.onStateUpdate { connection, state in
-            print("state update")
-            print(connection)
-            print(state)
-        }.onViabilityUpdate { connection, newViable in
-            print("viabilityUpdate")
-            print(newViable)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                subnetFieldFocused = false
+                NSApp.keyWindow?.makeFirstResponder(nil)
+            }
         }
-        
-        
     }
-    private func pauseScan() {}
 }
 
 #Preview {
