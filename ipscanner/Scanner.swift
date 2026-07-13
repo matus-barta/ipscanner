@@ -1,10 +1,3 @@
-//
-//  Scanner.swift
-//  ipscanner
-//
-//  Created by Matus Barta on 11/07/2026.
-//
-
 import Foundation
 import Observation
 
@@ -12,15 +5,25 @@ import Observation
 @Observable
 final class Scanner {
     var devices: [Device] = []
+
     var progress: Double = 0.0
     var isScanning = false
 
     var subnets: String = ""
-
     var subnetList: [Subnet] = []
 
+    var totalHosts: Int = 0
+    var scannedHosts: Int = 0
+    var onlineHosts: Int = 0
+
+    var offlineHosts: Int {
+        scannedHosts - onlineHosts
+    }
+
     private var scanTask: Task<Void, Never>?
+
     private let maxConcurrentHosts = 64
+
     private let defaultPorts = [
         22,
         80,
@@ -43,6 +46,15 @@ final class Scanner {
         normalizeSubnetInput()
 
         devices.removeAll()
+
+        let hosts = subnetList.flatMap {
+            $0.hosts()
+        }
+
+        totalHosts = hosts.count
+        scannedHosts = 0
+        onlineHosts = 0
+
         progress = 0
         isScanning = true
 
@@ -80,9 +92,11 @@ final class Scanner {
                 )
             }
 
-        subnetList = Array(Set(subnetList)).sorted {
-            "\($0.network)/\($0.prefix)" < "\($1.network)/\($1.prefix)"
-        }
+        subnetList = Array(Set(subnetList))
+            .sorted {
+                "\($0.network)/\($0.prefix)"
+                    < "\($1.network)/\($1.prefix)"
+            }
 
         subnets = subnetList
             .map { "\($0.network)/\($0.prefix)" }
@@ -133,15 +147,12 @@ final class Scanner {
             $0.hosts()
         }
 
-        let ports = defaultPorts
-        let totalChecks = hosts.count * ports.count
-
-        guard totalChecks > 0 else {
+        guard !hosts.isEmpty else {
             progress = 0
             return
         }
 
-        var completedChecks = 0
+        let ports = defaultPorts
 
         await withTaskGroup(of: HostScanResult.self) { group in
             let initialCount = min(maxConcurrentHosts, hosts.count)
@@ -166,14 +177,15 @@ final class Scanner {
                     return
                 }
 
-                completedChecks += result.checkedPorts
-                progress = Double(completedChecks) / Double(totalChecks)
+                scannedHosts += 1
 
                 if result.responded {
+                    onlineHosts += 1
+
                     let device = Device(
                         ip: result.host,
                         hostname: nil,
-                        mac: nil,
+                        mac: result.mac,
                         manufacturer: nil,
                         openPorts: result.openPorts
                     )
@@ -184,6 +196,8 @@ final class Scanner {
                         $0.ipSortable < $1.ipSortable
                     }
                 }
+
+                progress = Double(scannedHosts) / Double(totalHosts)
 
                 if nextIndex < hosts.count {
                     let host = hosts[nextIndex]

@@ -12,6 +12,8 @@ nonisolated struct HostScanResult: Sendable {
     let responded: Bool
     let openPorts: Set<Int>
     let checkedPorts: Int
+
+    let mac: String?
 }
 
 nonisolated enum HostScanner {
@@ -57,11 +59,13 @@ nonisolated enum HostScanner {
 
             case .cancelled:
                 print("\(host):\(port) cancelled")
+
                 return HostScanResult(
                     host: host,
                     responded: responded,
                     openPorts: openPorts,
-                    checkedPorts: checkedPorts
+                    checkedPorts: checkedPorts,
+                    mac: nil
                 )
 
             case let .failed(error):
@@ -70,11 +74,19 @@ nonisolated enum HostScanner {
             }
         }
 
+        let mac = ArpResolver.macAddress(for: host)
+
+        if let mac {
+            //responded = true
+            print("\(host) ARP -> \(mac)")
+        }
+
         return HostScanResult(
             host: host,
             responded: responded,
             openPorts: openPorts,
-            checkedPorts: checkedPorts
+            checkedPorts: checkedPorts,
+            mac: mac
         )
     }
 }

@@ -76,7 +76,7 @@ nonisolated enum PortScanner {
                 }
 
                 connection.stateUpdateHandler = { state in
-                    print("\(host):\(port) state = \(state)")
+                    // print("\(host):\(port) state = \(state)")
 
                     switch state {
                     case .ready:

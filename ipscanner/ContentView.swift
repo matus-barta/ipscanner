@@ -88,13 +88,20 @@ struct ContentView: View {
                 }
             }
 
-            Gauge(value: scanner.progress, in: 0.0 ... 1.0) {
-                Text("Progress")
-            } currentValueLabel: {
-                Text("\(Int(scanner.progress * 100))% of 100%")
-            }.gaugeStyle(
-                .accessoryLinearCapacity
-            )
+            VStack(alignment: .leading, spacing: 4) {
+                Gauge(value: scanner.progress, in: 0.0 ... 1.0) {
+                    Text("Progress: \(Int(scanner.progress * 100))%")
+                } currentValueLabel: {
+                    HStack {
+                        Text("Scanned: \(scanner.scannedHosts)/\(scanner.totalHosts)")
+                        Spacer()
+                        Text("Online: \(scanner.onlineHosts)")
+                        Text("Offline: \(scanner.offlineHosts)")
+                    }
+                }.gaugeStyle(
+                    .accessoryLinearCapacity
+                )
+            }
         }
         .padding()
         .onAppear {
