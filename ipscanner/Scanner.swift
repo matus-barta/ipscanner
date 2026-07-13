@@ -12,8 +12,6 @@ final class Scanner {
     var subnets: String = ""
     var subnetList: [Subnet] = []
 
-    var connectionTimeout = 0.5
-
     var totalHosts: Int = 0
     var scannedHosts: Int = 0
     var onlineHosts: Int = 0
@@ -25,6 +23,8 @@ final class Scanner {
     private var scanTask: Task<Void, Never>?
 
     private let maxConcurrentHosts = 64
+    var connectionTimeout = 0.5
+    private let maxConcurrentPortsPerHost = 8
 
     private let defaultPorts = ScanProfile.standard.ports
 
@@ -158,6 +158,8 @@ final class Scanner {
 
         let ports = defaultPorts
         let timeout = connectionTimeout
+        let hostConcurrency = maxConcurrentHosts
+        let portConcurrency = maxConcurrentPortsPerHost
 
         await withTaskGroup(of: HostScanResult.self) { group in
             let initialCount = min(maxConcurrentHosts, hosts.count)
@@ -169,7 +171,8 @@ final class Scanner {
                     await HostScanner.scan(
                         host: host,
                         ports: ports,
-                        timeout: timeout
+                        timeout: timeout,
+                        maxConcurrentPorts: portConcurrency
                     )
                 }
             }

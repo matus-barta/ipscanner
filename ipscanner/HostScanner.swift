@@ -21,64 +21,91 @@ nonisolated enum HostScanner {
     static func scan(
         host: String,
         ports: [UInt16],
-        timeout: TimeInterval
+        timeout: TimeInterval,
+        maxConcurrentPorts: Int = 8
     ) async -> HostScanResult {
         var responded = false
         var openPorts = Set<UInt16>()
         var checkedPorts: UInt16 = 0
 
-        for port in ports {
-            if Task.isCancelled {
-                break
+        await withTaskGroup(of: PortScanResult.self) { group in
+            let initialCount = min(maxConcurrentPorts, ports.count)
+
+            for index in 0 ..< initialCount {
+                let port = ports[index]
+
+                group.addTask {
+                    await PortScanner.scan(
+                        host: host,
+                        port: port,
+                        timeout: timeout
+                    )
+                }
             }
 
-            let result = await PortScanner.scan(
-                host: host,
-                port: port,
-                timeout: timeout
-            )
+            var nextIndex = initialCount
 
-            if Task.isCancelled {
-                break
-            }
+            while let result = await group.next() {
+                if Task.isCancelled {
+                    group.cancelAll()
+                    return
+                }
 
-            switch result.state {
-            case .open:
-                responded = true
-                openPorts.insert(port)
-                checkedPorts += 1
-                print("\(host):\(port) open")
+                switch result.state {
+                case .open:
+                    responded = true
+                    openPorts.insert(result.port)
+                    checkedPorts += 1
+                    print("\(host):\(result.port) open")
 
-            case .closed:
-                responded = true
-                checkedPorts += 1
-                print("\(host):\(port) closed, but host is alive")
+                case .closed:
+                    responded = true
+                    checkedPorts += 1
+                    print("\(host):\(result.port) closed, but host is alive")
 
-            case .timeout:
-                checkedPorts += 1
-                // print("\(host):\(port) timeout")
+                case .timeout:
+                    checkedPorts += 1
+                    // print("\(host):\(result.port) timeout")
 
-            case .cancelled:
-                print("\(host):\(port) cancelled")
+                case .cancelled:
+                    print("\(host):\(result.port) cancelled")
+                    group.cancelAll()
+                    return
 
-                return HostScanResult(
-                    host: host,
-                    responded: responded,
-                    openPorts: openPorts,
-                    checkedPorts: checkedPorts,
-                    hostname: nil,
-                    mac: nil
-                )
+                case let .failed(error):
+                    checkedPorts += 1
+                    print("\(host):\(result.port) failed: \(error)")
+                }
 
-            case let .failed(error):
-                checkedPorts += 1
-                print("\(host):\(port) failed: \(error)")
+                if nextIndex < ports.count {
+                    let port = ports[nextIndex]
+                    nextIndex += 1
+
+                    group.addTask {
+                        await PortScanner.scan(
+                            host: host,
+                            port: port,
+                            timeout: timeout
+                        )
+                    }
+                }
             }
         }
 
+        if Task.isCancelled {
+            return HostScanResult(
+                host: host,
+                responded: responded,
+                openPorts: openPorts,
+                checkedPorts: checkedPorts,
+                hostname: nil,
+                mac: nil
+            )
+        }
+
         let mac = ArpResolver.macAddress(for: host)
+
         if let mac {
-            // responded = true
             print("\(host) ARP -> \(mac)")
         }
 
