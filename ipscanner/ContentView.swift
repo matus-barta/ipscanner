@@ -23,6 +23,12 @@ struct ContentView: View {
             HStack {
                 TextField("", text: $scanner.subnets)
                     .focused($subnetFieldFocused)
+                    .onChange(of: scanner.subnets) {
+                        scanner.parseSubnets()
+                    }
+                    .onSubmit {
+                        scanner.normalizeSubnetInput()
+                    }
                 Button("Scan for subnets", systemImage: "arrow.trianglehead.clockwise.rotate.90",
                        action: scanner.refreshSubnets)
                     .labelStyle(.iconOnly)
@@ -31,6 +37,7 @@ struct ContentView: View {
             Table(of: Device.self, selection: $selection, sortOrder: $sortOrder) {
                 TableColumn("Hostname", value: \.hostnameSort)
                 TableColumn("IP address", value: \.ip)
+                TableColumn("Open ports", value: \.openPortsDisplay)
                 TableColumn("MAC address", value: \.macSort)
                 TableColumn("Manufacturer", value: \.manufacturerSort)
             } rows: {
@@ -52,10 +59,24 @@ struct ContentView: View {
             .searchable(text: $search)
             .toolbar {
                 ToolbarItem {
-                    Button("Scan", systemImage: "play.fill", action: scanner.startScan)
-                        .labelStyle(.titleAndIcon)
-                        .buttonStyle(.glassProminent)
-                        .keyboardShortcut(.defaultAction)
+                    Button(
+                        scanner.isScanning ? "Stop" : "Scan",
+                        systemImage: scanner.isScanning ? "stop.fill" : "play.fill"
+                    ) {
+                        if scanner.isScanning {
+                            scanner.stopScan()
+                        } else {
+                            scanner.startScan()
+                        }
+                    }
+                    .labelStyle(.titleAndIcon)
+                    .buttonStyle(.glass)
+                    .tint(
+                        scanner.isScanning
+                            ? Color.red.opacity(0.75)
+                            : Color.green.opacity(0.75)
+                    )
+                    .keyboardShortcut(.defaultAction)
                 }
                 ToolbarItem {
                     Button(
@@ -70,7 +91,7 @@ struct ContentView: View {
             Gauge(value: scanner.progress, in: 0.0 ... 1.0) {
                 Text("Scanning")
             } currentValueLabel: {
-                Text("\(Int(scanner.progress * 100)) out of 100")
+                Text("\(Int(scanner.progress * 100))% of 100%")
             }.gaugeStyle(
                 .accessoryLinearCapacity
             )

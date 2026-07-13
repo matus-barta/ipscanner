@@ -30,4 +30,12 @@ nonisolated struct Device: Identifiable, Hashable {
     var manufacturerSort: String {
         manufacturer ?? ""
     }
+    
+    var openPortsDisplay: String {
+        openPorts
+            .sorted()
+            .map(String.init)
+            .joined(separator: ", ")
+    }
+
 }
