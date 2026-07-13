@@ -89,7 +89,7 @@ struct ContentView: View {
             }
 
             Gauge(value: scanner.progress, in: 0.0 ... 1.0) {
-                Text("Scanning")
+                Text("Progress")
             } currentValueLabel: {
                 Text("\(Int(scanner.progress * 100))% of 100%")
             }.gaugeStyle(

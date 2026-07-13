@@ -20,7 +20,7 @@ final class Scanner {
     var subnetList: [Subnet] = []
 
     private var scanTask: Task<Void, Never>?
-
+    private let maxConcurrentHosts = 64
     private let defaultPorts = [
         22,
         80,
@@ -137,74 +137,69 @@ final class Scanner {
         let totalChecks = hosts.count * ports.count
 
         guard totalChecks > 0 else {
-            isScanning = false
             progress = 0
             return
         }
 
         var completedChecks = 0
 
-        for host in hosts {
-            if Task.isCancelled {
-                break
+        await withTaskGroup(of: HostScanResult.self) { group in
+            let initialCount = min(maxConcurrentHosts, hosts.count)
+
+            for index in 0 ..< initialCount {
+                let host = hosts[index]
+
+                group.addTask {
+                    await HostScanner.scan(
+                        host: host,
+                        ports: ports,
+                        timeout: 1.0
+                    )
+                }
             }
 
-            var hostResponded = false
-            var openPorts = Set<Int>()
+            var nextIndex = initialCount
 
-            for port in ports {
+            while let result = await group.next() {
                 if Task.isCancelled {
-                    break
+                    group.cancelAll()
+                    return
                 }
 
-                let result = await PortScanner.scan(
-                    host: host,
-                    port: port,
-                    timeout: 1.0
-                )
-
-                if Task.isCancelled {
-                    break
-                }
-
-                completedChecks += 1
+                completedChecks += result.checkedPorts
                 progress = Double(completedChecks) / Double(totalChecks)
 
-                switch result.state {
-                case .open:
-                    hostResponded = true
-                    openPorts.insert(port)
-                    print("\(host):\(port) open")
-
-                case .closed:
-                    hostResponded = true
-                    print("\(host):\(port) closed, but host is alive")
-
-                case .timeout:
-                    print("\(host):\(port) timeout")
-
-                case .cancelled:
-                    print("\(host):\(port) cancelled")
-                    return
-
-                case let .failed(error):
-                    print("\(host):\(port) failed: \(error)")
-                }
-            }
-
-            if hostResponded {
-                devices.append(
-                    Device(
-                        ip: host,
+                if result.responded {
+                    let device = Device(
+                        ip: result.host,
                         hostname: nil,
                         mac: nil,
                         manufacturer: nil,
-                        openPorts: openPorts
+                        openPorts: result.openPorts
                     )
-                )
+
+                    devices.append(device)
+
+                    devices.sort {
+                        $0.ipSortable < $1.ipSortable
+                    }
+                }
+
+                if nextIndex < hosts.count {
+                    let host = hosts[nextIndex]
+                    nextIndex += 1
+
+                    group.addTask {
+                        await HostScanner.scan(
+                            host: host,
+                            ports: ports,
+                            timeout: 1.0
+                        )
+                    }
+                }
             }
         }
-        
+
         progress = 1.0
     }
 }

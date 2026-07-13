@@ -30,7 +30,7 @@ nonisolated struct Device: Identifiable, Hashable {
     var manufacturerSort: String {
         manufacturer ?? ""
     }
-    
+
     var openPortsDisplay: String {
         openPorts
             .sorted()
@@ -38,4 +38,18 @@ nonisolated struct Device: Identifiable, Hashable {
             .joined(separator: ", ")
     }
 
+    var ipSortable: UInt32 {
+        let parts = ip
+            .split(separator: ".")
+            .compactMap { UInt32(String($0)) }
+
+        guard parts.count == 4 else {
+            return 0
+        }
+
+        return (parts[0] << 24)
+            | (parts[1] << 16)
+            | (parts[2] << 8)
+            | parts[3]
+    }
 }

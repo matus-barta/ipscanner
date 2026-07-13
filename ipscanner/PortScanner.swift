@@ -76,6 +76,8 @@ nonisolated enum PortScanner {
                 }
 
                 connection.stateUpdateHandler = { state in
+                    print("\(host):\(port) state = \(state)")
+
                     switch state {
                     case .ready:
                         session.resume(
@@ -85,6 +87,19 @@ nonisolated enum PortScanner {
                                 state: .open
                             )
                         )
+
+                    case let .waiting(error):
+                        if case let .posix(posixError) = error,
+                           posixError == .ECONNREFUSED
+                        {
+                            session.resume(
+                                PortScanResult(
+                                    host: host,
+                                    port: port,
+                                    state: .closed
+                                )
+                            )
+                        }
 
                     case let .failed(error):
                         if case let .posix(posixError) = error,
