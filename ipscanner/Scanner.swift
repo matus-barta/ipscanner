@@ -11,7 +11,7 @@ final class Scanner {
 
     var subnets: String = ""
     var subnetList: [Subnet] = []
-    
+
     var connectionTimeout = 0.5
 
     var totalHosts: Int = 0
@@ -188,7 +188,7 @@ final class Scanner {
                     onlineHosts += 1
 
                     let manufacturer = MacVendorResolver.vendor(for: result.mac)
-                    
+
                     let device = Device(
                         ip: result.host,
                         hostname: result.hostname,

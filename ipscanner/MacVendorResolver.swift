@@ -8,9 +8,7 @@
 import Foundation
 
 nonisolated enum MacVendorResolver {
-    private static let vendors: [UInt32: String] = {
-        loadDatabase()
-    }()
+    private static let vendors: [UInt32: String] = loadDatabase()
 
     static func vendor(for mac: String?) -> String? {
         guard let mac else {

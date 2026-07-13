@@ -25,7 +25,7 @@ nonisolated enum HostScanner {
     ) async -> HostScanResult {
         var responded = false
         var openPorts = Set<UInt16>()
-        var checkedPorts:UInt16 = 0
+        var checkedPorts: UInt16 = 0
 
         for port in ports {
             if Task.isCancelled {

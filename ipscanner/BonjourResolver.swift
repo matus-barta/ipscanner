@@ -51,10 +51,9 @@ final nonisolated class BonjourResolver: NSObject, NetServiceBrowserDelegate, Ne
             "_workstation._tcp.",
             "_device-info._tcp.",
             "_adisk._tcp.",
-            
-            "_googlecast._tcp.",
-            "_androidtvremote2._tcp."
 
+            "_googlecast._tcp.",
+            "_androidtvremote2._tcp.",
         ]
 
         for type in serviceTypes {
