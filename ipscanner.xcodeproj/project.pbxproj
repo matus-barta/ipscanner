@@ -10,9 +10,23 @@
 		CA699F392E7C66D800964656 /* ipscanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ipscanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CA17E21B30058AA800F6C46B /* Exceptions for "ipscanner" folder in "ipscanner" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/oui.csv,
+				"Scripts/generate-oui-min.py",
+			);
+			target = CA699F382E7C66D800964656 /* ipscanner */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CA699F3B2E7C66D800964656 /* ipscanner */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CA17E21B30058AA800F6C46B /* Exceptions for "ipscanner" folder in "ipscanner" target */,
+			);
 			path = ipscanner;
 			sourceTree = "<group>";
 		};

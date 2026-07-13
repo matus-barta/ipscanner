@@ -17,7 +17,7 @@ nonisolated struct Device: Identifiable, Hashable {
     var mac: String?
     var manufacturer: String?
 
-    var openPorts: Set<Int> = []
+    var openPorts: Set<UInt16> = []
 
     var hostnameSort: String {
         hostname ?? ""

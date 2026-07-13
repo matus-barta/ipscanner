@@ -11,6 +11,8 @@ final class Scanner {
 
     var subnets: String = ""
     var subnetList: [Subnet] = []
+    
+    var connectionTimeout = 0.5
 
     var totalHosts: Int = 0
     var scannedHosts: Int = 0
@@ -24,16 +26,18 @@ final class Scanner {
 
     private let maxConcurrentHosts = 64
 
-    private let defaultPorts = [
-        22,
-        80,
-        443,
-        445,
-        3389,
-    ]
+    private let defaultPorts = ScanProfile.standard.ports
 
     init() {
         refreshSubnets()
+        BonjourResolver.shared.onHostnameFound = { [weak self] ip, hostname in
+            self?.applyBonjourHostname(
+                ip: ip,
+                hostname: hostname
+            )
+        }
+
+        BonjourResolver.shared.start()
     }
 
     func startScan() {
@@ -153,6 +157,7 @@ final class Scanner {
         }
 
         let ports = defaultPorts
+        let timeout = connectionTimeout
 
         await withTaskGroup(of: HostScanResult.self) { group in
             let initialCount = min(maxConcurrentHosts, hosts.count)
@@ -164,7 +169,7 @@ final class Scanner {
                     await HostScanner.scan(
                         host: host,
                         ports: ports,
-                        timeout: 1.0
+                        timeout: timeout
                     )
                 }
             }
@@ -182,11 +187,13 @@ final class Scanner {
                 if result.responded {
                     onlineHosts += 1
 
+                    let manufacturer = MacVendorResolver.vendor(for: result.mac)
+                    
                     let device = Device(
                         ip: result.host,
-                        hostname: nil,
+                        hostname: result.hostname,
                         mac: result.mac,
-                        manufacturer: nil,
+                        manufacturer: manufacturer,
                         openPorts: result.openPorts
                     )
 
@@ -215,5 +222,25 @@ final class Scanner {
         }
 
         progress = 1.0
+    }
+
+    private func applyBonjourHostname(
+        ip: String,
+        hostname: String
+    ) {
+        guard let index = devices.firstIndex(
+            where: { $0.ip == ip }
+        ) else {
+            return
+        }
+
+        // Do not overwrite NetBIOS / reverse DNS names.
+        guard devices[index].hostname == nil ||
+            devices[index].hostname?.isEmpty == true
+        else {
+            return
+        }
+
+        devices[index].hostname = hostname
     }
 }

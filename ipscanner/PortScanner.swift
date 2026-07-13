@@ -18,17 +18,17 @@ nonisolated enum PortState: Hashable, Sendable {
 
 nonisolated struct PortScanResult: Hashable, Sendable {
     let host: String
-    let port: Int
+    let port: UInt16
     let state: PortState
 }
 
 nonisolated enum PortScanner {
     static func scan(
         host: String,
-        port: Int,
-        timeout: TimeInterval = 1.0
+        port: UInt16,
+        timeout: TimeInterval
     ) async -> PortScanResult {
-        guard (1 ... 65535).contains(port),
+        guard port != 0,
               let nwPort = NWEndpoint.Port(rawValue: UInt16(port))
         else {
             return PortScanResult(
