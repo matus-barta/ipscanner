@@ -162,7 +162,7 @@ final class Scanner {
         let portConcurrency = maxConcurrentPortsPerHost
 
         await withTaskGroup(of: HostScanResult.self) { group in
-            let initialCount = min(maxConcurrentHosts, hosts.count)
+            let initialCount = min(hostConcurrency, hosts.count)
 
             for index in 0 ..< initialCount {
                 let host = hosts[index]
