@@ -29,6 +29,10 @@ enum ScanProfile: String, CaseIterable, Identifiable {
         }
     }
 
+    var portCount: Int {
+        ports.count
+    }
+
     var ports: [UInt16] {
         switch self {
         case .quick:

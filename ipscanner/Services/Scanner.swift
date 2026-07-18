@@ -20,13 +20,13 @@ final class Scanner {
         scannedHosts - onlineHosts
     }
 
+    var scanProfile: ScanProfile = .quick
+
     private var scanTask: Task<Void, Never>?
 
     private let maxConcurrentHosts = 64
     var connectionTimeout = 0.5
     private let maxConcurrentPortsPerHost = 8
-
-    private let defaultPorts = ScanProfile.standard.ports
 
     init() {
         refreshSubnets()
@@ -156,7 +156,7 @@ final class Scanner {
             return
         }
 
-        let ports = defaultPorts
+        let ports = scanProfile.ports
         let timeout = connectionTimeout
         let hostConcurrency = maxConcurrentHosts
         let portConcurrency = maxConcurrentPortsPerHost
