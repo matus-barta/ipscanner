@@ -71,9 +71,7 @@ struct ScannerToolbar: ToolbarContent {
                     ? "sidebar.right"
                     : "sidebar.right"
             ) {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    inspectorPresented.toggle()
-                }
+                inspectorPresented.toggle()
             }
             .help(
                 inspectorPresented

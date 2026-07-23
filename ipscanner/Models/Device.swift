@@ -14,6 +14,8 @@ nonisolated struct Device: Identifiable, Hashable {
     let ip: String
 
     var hostname: String?
+    var hostnameSource: HostnameSource?
+
     var mac: String?
     var manufacturer: String?
 

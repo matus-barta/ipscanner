@@ -26,44 +26,31 @@ struct ContentView: View {
     @FocusState private var subnetFieldFocused: Bool
 
     var body: some View {
-        HSplitView {
-            VStack(spacing: 10) {
-                SubnetEditorView(subnetFieldFocused: $subnetFieldFocused)
+        VStack(spacing: 10) {
+            SubnetEditorView(subnetFieldFocused: $subnetFieldFocused)
 
-                DeviceTableView(
-                    selection: $selection,
-                    sortOrder: $sortOrder,
-                    devices: scanner.devices
-                )
-                .onChange(of: sortOrder) {
-                    scanner.devices.sort(using: sortOrder)
-                }
-                .onChange(of: selection) { _, newSelection in
-                    guard newSelection != nil else {
-                        return
-                    }
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        inspectorPresented = true
-                    }
-                }
-                .searchable(text: $search)
+            DeviceTableView(
+                selection: $selection,
+                sortOrder: $sortOrder,
+                devices: scanner.devices
+            )
+            .onChange(of: sortOrder) {
+                scanner.devices.sort(using: sortOrder)
+            }
+            .onChange(of: selection) { _, newSelection in
+                inspectorPresented = newSelection != nil
+            }
+            .searchable(text: $search)
 
-                ScanStatusView()
-            }
-            .padding([.leading, .trailing, .bottom])
-            .frame(minWidth: 500)
-            if inspectorPresented {
-                DeviceInspectorView(device: selectedDevice)
-                    .frame(
-                        minWidth: 220,
-                        idealWidth: 230,
-                        maxWidth: 250,
-                        maxHeight: .infinity
-                    )
-            }
+            ScanStatusView()
         }
+        .padding()
         .toolbar {
             ScannerToolbar(inspectorPresented: $inspectorPresented)
+        }
+        .inspector(isPresented: $inspectorPresented) {
+            DeviceInspectorView(device: selectedDevice)
+                .inspectorColumnWidth(min: 260, ideal: 320, max: 450)
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -75,6 +62,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView().frame(minWidth: 800, minHeight: 500)
+    ContentView().frame(minWidth: 900, minHeight: 500)
         .environment(Scanner())
 }

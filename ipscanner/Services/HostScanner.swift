@@ -14,6 +14,7 @@ nonisolated struct HostScanResult: Sendable {
     let checkedPorts: UInt16
 
     let hostname: String?
+    let hostnameSource: HostnameSource?
     let mac: String?
 }
 
@@ -56,6 +57,7 @@ nonisolated enum HostScanner {
                 openPorts: [],
                 checkedPorts: 0,
                 hostname: nil,
+                hostnameSource: nil,
                 mac: nil
             )
         }
@@ -89,6 +91,7 @@ nonisolated enum HostScanner {
                 openPorts: openPorts,
                 checkedPorts: checkedPorts,
                 hostname: nil,
+                hostnameSource: nil,
                 mac: nil
             )
         }
@@ -102,6 +105,7 @@ nonisolated enum HostScanner {
                 openPorts: [],
                 checkedPorts: checkedPorts,
                 hostname: nil,
+                hostnameSource: nil,
                 mac: nil
             )
         }
@@ -131,6 +135,7 @@ nonisolated enum HostScanner {
                 openPorts: openPorts,
                 checkedPorts: checkedPorts,
                 hostname: nil,
+                hostnameSource: nil,
                 mac: nil
             )
         }
@@ -160,6 +165,7 @@ nonisolated enum HostScanner {
                 openPorts: openPorts,
                 checkedPorts: checkedPorts,
                 hostname: nil,
+                hostnameSource: nil,
                 mac: nil
             )
         }
@@ -195,7 +201,22 @@ nonisolated enum HostScanner {
             print("\(host) Bonjour -> \(bonjourHostname)")
         }
 
-        let hostname = reverseHostname ?? netBIOSHostname ?? bonjourHostname
+        let hostname: String?
+        let hostnameSource: HostnameSource?
+
+        if let reverseHostname {
+            hostname = reverseHostname
+            hostnameSource = .reverseDNS
+        } else if let netBIOSHostname {
+            hostname = netBIOSHostname
+            hostnameSource = .netBIOS
+        } else if let bonjourHostname {
+            hostname = bonjourHostname
+            hostnameSource = .bonjour
+        } else {
+            hostname = nil
+            hostnameSource = nil
+        }
 
         return HostScanResult(
             host: host,
@@ -203,6 +224,7 @@ nonisolated enum HostScanner {
             openPorts: openPorts,
             checkedPorts: checkedPorts,
             hostname: hostname,
+            hostnameSource: hostnameSource,
             mac: mac
         )
     }

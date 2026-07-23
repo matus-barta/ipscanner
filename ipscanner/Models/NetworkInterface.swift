@@ -7,16 +7,22 @@
 
 import Darwin
 import Foundation
+import SystemConfiguration
 
-struct NetworkInterface: Identifiable, Hashable {
-    let id = UUID()
-
+nonisolated struct NetworkInterface: Identifiable, Hashable, Sendable {
     let name: String
     let address: String
     let netmask: String
 
+    let type: NetworkInterfaceType
+    let localizedName: String
+
+    var id: String {
+        "\(name)|\(address)"
+    }
+
     var isPhysical: Bool {
-        name.hasPrefix("en")
+        type.isPhysical
     }
 
     var cidrPrefix: Int {
@@ -56,10 +62,25 @@ struct NetworkInterface: Identifiable, Hashable {
 
         return "\(networkAddress)/\(cidrPrefix)"
     }
+
+    var displayName: String {
+        let interfaceDescription = "\(localizedName) (\(name))"
+        if let subnet {
+            return "\(interfaceDescription) – \(subnet)"
+        }
+        return "\(interfaceDescription) – \(address)"
+    }
 }
 
-enum NetworkInterfaces {
+nonisolated enum NetworkInterfaces {
+    private struct InterfaceMetadata: Sendable {
+        let localizedName: String
+        let type: NetworkInterfaceType
+    }
+
     static func getAll() -> [NetworkInterface] {
+        let metadata = loadInterfaceMetadata()
+
         var interfaces: [NetworkInterface] = []
         var ifaddr: UnsafeMutablePointer<ifaddrs>?
 
@@ -114,7 +135,7 @@ enum NetworkInterfaces {
                 count: Int(NI_MAXHOST)
             )
 
-            getnameinfo(
+            let addressResult = getnameinfo(
                 addr,
                 socklen_t(addr.pointee.sa_len),
                 &addressBuffer,
@@ -124,7 +145,9 @@ enum NetworkInterfaces {
                 NI_NUMERICHOST
             )
 
-            getnameinfo(
+            guard addressResult == 0 else { continue }
+
+            let netmaskResult = getnameinfo(
                 netmask,
                 socklen_t(netmask.pointee.sa_len),
                 &netmaskBuffer,
@@ -134,23 +157,93 @@ enum NetworkInterfaces {
                 NI_NUMERICHOST
             )
 
-            guard let address = String(utf8String: addressBuffer) else {
+            guard netmaskResult == 0,
+                  let address = String(utf8String: addressBuffer),
+                  let netmask = String(utf8String: netmaskBuffer)
+            else {
                 continue
             }
 
-            guard let netmaskAddress = String(utf8String: netmaskBuffer) else {
-                continue
-            }
+            let interfaceMetadata = metadata[name] ?? fallbackMetadata(for: name)
 
             interfaces.append(
                 NetworkInterface(
                     name: name,
                     address: address,
-                    netmask: netmaskAddress
+                    netmask: netmask,
+                    type: interfaceMetadata.type,
+                    localizedName: interfaceMetadata.localizedName
                 )
             )
         }
 
         return interfaces
+    }
+
+    private static func loadInterfaceMetadata() -> [String: InterfaceMetadata] {
+        let systemInterfaces = SCNetworkInterfaceCopyAll() as NSArray
+        var result: [String: InterfaceMetadata] = [:]
+
+        for case let systemInterface as SCNetworkInterface in systemInterfaces {
+            guard let bsdName = SCNetworkInterfaceGetBSDName(systemInterface) as String?
+            else {
+                continue
+            }
+
+            let localizedName = SCNetworkInterfaceGetLocalizedDisplayName(systemInterface) as String? ?? bsdName
+
+            let systemType = SCNetworkInterfaceGetInterfaceType(systemInterface) as String?
+            result[bsdName] = InterfaceMetadata(localizedName: localizedName, type: mapInterfaceType(systemType, localizedName: localizedName, bsdName: bsdName))
+        }
+
+        return result
+    }
+
+    private static func mapInterfaceType(_ systemType: String?, localizedName: String, bsdName: String) -> NetworkInterfaceType {
+        let type = systemType?.lowercased() ?? ""
+        let label = localizedName.lowercased()
+
+        if type.contains("ieee80211") || type.contains("airport") || label.contains("wi-fi") || label.contains("wifi") {
+            return .wifi
+        }
+        if type.contains("ethernet") || label.contains("ethernet") || label.contains("lan") {
+            return .ethernet
+        }
+        if type.contains("ppp") || type.contains("vpn") || label.contains("vpn") {
+            return .vpn
+        }
+        if type.contains("bluetooth") || label.contains("bluetooth") {
+            return .bluetooth
+        }
+        if type.contains("wwan") || label.contains("cellular") {
+            return .cellular
+        }
+        return classifyByBSDName(bsdName)
+    }
+
+    private static func fallbackMetadata(for bsdName: String) -> InterfaceMetadata {
+        let type = classifyByBSDName(bsdName)
+        return InterfaceMetadata(localizedName: type.displayName, type: type)
+    }
+
+    private static func classifyByBSDName(_ name: String) -> NetworkInterfaceType {
+        if name.hasPrefix("utun") || name.hasPrefix("tun") || name.hasPrefix("tap") || name.hasPrefix("ipsec") {
+            return .vpn
+        }
+        if name.hasPrefix("bridge") {
+            return .bridge
+        }
+        if name == "lo0" {
+            return .loopback
+        }
+        if name.hasPrefix("gif") || name.hasPrefix("stf") {
+            return .tunnel
+        }
+
+        // Do not classify every en* interface as physical here.
+        // en* may represent Wi-Fi, built-in Ethernet, USB Ethernet, Thunderbolt networking, virtual adapters, or other hardware.
+
+        // SystemConfiguration metadata is preferred for en* devices.
+        return .other
     }
 }

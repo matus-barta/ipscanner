@@ -21,15 +21,22 @@ final class Scanner {
     }
 
     var scanProfile: ScanProfile = .quick
+    var connectionTimeout = 0.5
+
+    let interfaceSelection = InterfaceSelection()
 
     private var scanTask: Task<Void, Never>?
 
     private let maxConcurrentHosts = 64
-    var connectionTimeout = 0.5
     private let maxConcurrentPortsPerHost = 8
 
     init() {
-        refreshSubnets()
+        interfaceSelection.onSelectionChanged = {
+            [weak self] selectedSubnets in
+            self?.applySelectedSubnets(selectedSubnets)
+        }
+        interfaceSelection.refresh()
+
         BonjourResolver.shared.onHostnameFound = { [weak self] ip, hostname in
             self?.applyBonjourHostname(
                 ip: ip,
@@ -48,7 +55,6 @@ final class Scanner {
         print("Scanner.startScan()")
 
         normalizeSubnetInput()
-
         devices.removeAll()
 
         let hosts = subnetList.flatMap {
@@ -80,31 +86,13 @@ final class Scanner {
         isScanning = false
     }
 
+    func refreshInterfaces() {
+        interfaceSelection.refresh()
+    }
+
+    /// Kept for compatibility with existing buttons and views that still call refreshSubnets().
     func refreshSubnets() {
-        let interfaces = NetworkInterfaces.getAll()
-
-        subnetList = interfaces
-            .filter(\.isPhysical)
-            .compactMap { interface in
-                guard let network = interface.networkAddress else {
-                    return nil
-                }
-
-                return Subnet(
-                    network: network,
-                    prefix: interface.cidrPrefix
-                )
-            }
-
-        subnetList = Array(Set(subnetList))
-            .sorted {
-                "\($0.network)/\($0.prefix)"
-                    < "\($1.network)/\($1.prefix)"
-            }
-
-        subnets = subnetList
-            .map { "\($0.network)/\($0.prefix)" }
-            .joined(separator: ", ")
+        refreshInterfaces()
     }
 
     func parseSubnets() {
@@ -139,6 +127,15 @@ final class Scanner {
 
         print("=== Normalized subnet input ===")
         print(subnets)
+    }
+
+    private func applySelectedSubnets(
+        _ selectedSubnets: [Subnet]
+    ) {
+        subnetList = selectedSubnets
+        subnets = selectedSubnets
+            .map(\.displayValue)
+            .joined(separator: ", ")
     }
 
     private func scanSubnets() async {
@@ -195,6 +192,7 @@ final class Scanner {
                     let device = Device(
                         ip: result.host,
                         hostname: result.hostname,
+                        hostnameSource: result.hostnameSource,
                         mac: result.mac,
                         manufacturer: manufacturer,
                         openPorts: result.openPorts
@@ -217,7 +215,8 @@ final class Scanner {
                         await HostScanner.scan(
                             host: host,
                             ports: ports,
-                            timeout: 1.0
+                            timeout: timeout,
+                            maxConcurrentPorts: portConcurrency
                         )
                     }
                 }
@@ -245,5 +244,6 @@ final class Scanner {
         }
 
         devices[index].hostname = hostname
+        devices[index].hostnameSource = .bonjour
     }
 }
