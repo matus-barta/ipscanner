@@ -20,8 +20,12 @@ final class Scanner {
         scannedHosts - onlineHosts
     }
 
-    var scanProfile: ScanProfile = .quick
-    var connectionTimeout = 0.5
+    var scanProfile: ScanProfile
+    var connectionTimeout: TimeInterval
+
+    private(set) var reverseDNSEnabled: Bool
+    private(set) var netBIOSEnabled: Bool
+    private(set) var bonjourEnabled: Bool
 
     let interfaceSelection = InterfaceSelection()
 
@@ -31,26 +35,89 @@ final class Scanner {
     private let maxConcurrentPortsPerHost = 8
 
     init() {
+        let defaults = UserDefaults.standard
+
+        let profileValue = defaults.string(
+            forKey: AppPreferenceKeys.defaultScanProfile
+        )
+
+        scanProfile = ScanProfile(
+            rawValue: profileValue ?? ""
+        ) ?? AppPreferenceDefaults.scanProfile
+
+        if defaults.object(
+            forKey: AppPreferenceKeys.connectionTimeout
+        ) != nil {
+            connectionTimeout = defaults.double(
+                forKey: AppPreferenceKeys.connectionTimeout
+            )
+        } else {
+            connectionTimeout =
+                AppPreferenceDefaults.connectionTimeout
+        }
+
+        reverseDNSEnabled = defaults.object(
+            forKey: AppPreferenceKeys.reverseDNSEnabled
+        ) == nil
+            ? AppPreferenceDefaults.reverseDNSEnabled
+            : defaults.bool(
+                forKey: AppPreferenceKeys.reverseDNSEnabled
+            )
+
+        netBIOSEnabled = defaults.object(
+            forKey: AppPreferenceKeys.netBIOSEnabled
+        ) == nil
+            ? AppPreferenceDefaults.netBIOSEnabled
+            : defaults.bool(
+                forKey: AppPreferenceKeys.netBIOSEnabled
+            )
+
+        bonjourEnabled = defaults.object(
+            forKey: AppPreferenceKeys.bonjourEnabled
+        ) == nil
+            ? AppPreferenceDefaults.bonjourEnabled
+            : defaults.bool(
+                forKey: AppPreferenceKeys.bonjourEnabled
+            )
+
         interfaceSelection.onSelectionChanged = {
             [weak self] selectedSubnets in
             self?.applySelectedSubnets(selectedSubnets)
         }
+
+        let physicalOnly = defaults.object(
+            forKey: AppPreferenceKeys.physicalInterfacesOnly
+        ) == nil
+            ? AppPreferenceDefaults.physicalInterfacesOnly
+            : defaults.bool(
+                forKey: AppPreferenceKeys.physicalInterfacesOnly
+            )
+
+        interfaceSelection.setPhysicalInterfacesOnly(
+            physicalOnly
+        )
+
         interfaceSelection.refresh()
 
-        BonjourResolver.shared.onHostnameFound = { [weak self] ip, hostname in
+        BonjourResolver.shared.onHostnameFound = {
+            [weak self] ip, hostname in
             self?.applyBonjourHostname(
                 ip: ip,
                 hostname: hostname
             )
         }
 
-        BonjourResolver.shared.start()
+        if bonjourEnabled {
+            BonjourResolver.shared.start()
+        }
     }
 
     func startScan() {
         guard !isScanning else {
             return
         }
+
+        reloadPersistentSettings()
 
         print("Scanner.startScan()")
 
@@ -158,6 +225,10 @@ final class Scanner {
         let hostConcurrency = maxConcurrentHosts
         let portConcurrency = maxConcurrentPortsPerHost
 
+        let useReverseDNS = reverseDNSEnabled
+        let useNetBIOS = netBIOSEnabled
+        let useBonjour = bonjourEnabled
+
         await withTaskGroup(of: HostScanResult.self) { group in
             let initialCount = min(hostConcurrency, hosts.count)
 
@@ -169,7 +240,10 @@ final class Scanner {
                         host: host,
                         ports: ports,
                         timeout: timeout,
-                        maxConcurrentPorts: portConcurrency
+                        maxConcurrentPorts: portConcurrency,
+                        reverseDNSEnabled: useReverseDNS,
+                        netBIOSEnabled: useNetBIOS,
+                        bonjourEnabled: useBonjour
                     )
                 }
             }
@@ -245,5 +319,150 @@ final class Scanner {
 
         devices[index].hostname = hostname
         devices[index].hostnameSource = .bonjour
+    }
+
+    func exportDevices(
+        as format: ExportFormat
+    ) {
+        DeviceExporter.export(
+            devices,
+            format: format
+        )
+    }
+
+    func exportDevice(
+        _ device: Device,
+        as format: ExportFormat
+    ) {
+        let safeName = exportFileName(
+            for: device,
+            format: format
+        )
+
+        DeviceExporter.export(
+            [device],
+            format: format,
+            suggestedFileName: safeName
+        )
+    }
+
+    private func exportFileName(
+        for device: Device,
+        format: ExportFormat
+    ) -> String {
+        let sourceName: String = if let hostname = device.hostname,
+                                    !hostname.isEmpty
+        {
+            hostname
+        } else {
+            device.ip
+        }
+
+        let allowedCharacters =
+            CharacterSet.alphanumerics
+                .union(
+                    CharacterSet(
+                        charactersIn: "-_"
+                    )
+                )
+
+        let safeName = sourceName.unicodeScalars
+            .map { scalar in
+                allowedCharacters.contains(scalar)
+                    ? String(scalar)
+                    : "-"
+            }
+            .joined()
+
+        return "\(safeName).\(format.fileExtension)"
+    }
+
+    private func reloadPersistentSettings() {
+        let defaults = UserDefaults.standard
+
+        if let profileValue = defaults.string(
+            forKey: AppPreferenceKeys.defaultScanProfile
+        ),
+            let profile = ScanProfile(rawValue: profileValue)
+        {
+            scanProfile = profile
+        }
+
+        if defaults.object(
+            forKey: AppPreferenceKeys.connectionTimeout
+        ) != nil {
+            connectionTimeout = defaults.double(
+                forKey: AppPreferenceKeys.connectionTimeout
+            )
+        }
+
+        reverseDNSEnabled = defaults.object(
+            forKey: AppPreferenceKeys.reverseDNSEnabled
+        ) == nil
+            ? AppPreferenceDefaults.reverseDNSEnabled
+            : defaults.bool(
+                forKey: AppPreferenceKeys.reverseDNSEnabled
+            )
+
+        netBIOSEnabled = defaults.object(
+            forKey: AppPreferenceKeys.netBIOSEnabled
+        ) == nil
+            ? AppPreferenceDefaults.netBIOSEnabled
+            : defaults.bool(
+                forKey: AppPreferenceKeys.netBIOSEnabled
+            )
+
+        bonjourEnabled = defaults.object(
+            forKey: AppPreferenceKeys.bonjourEnabled
+        ) == nil
+            ? AppPreferenceDefaults.bonjourEnabled
+            : defaults.bool(
+                forKey: AppPreferenceKeys.bonjourEnabled
+            )
+
+        let physicalOnly = defaults.object(
+            forKey: AppPreferenceKeys.physicalInterfacesOnly
+        ) == nil
+            ? AppPreferenceDefaults.physicalInterfacesOnly
+            : defaults.bool(
+                forKey: AppPreferenceKeys.physicalInterfacesOnly
+            )
+
+        if physicalOnly !=
+            interfaceSelection.physicalInterfacesOnly
+        {
+            interfaceSelection.setPhysicalInterfacesOnly(
+                physicalOnly
+            )
+        }
+
+        if bonjourEnabled {
+            BonjourResolver.shared.start()
+        }
+    }
+
+    func device(
+        withID id: Device.ID?
+    ) -> Device? {
+        guard let id else {
+            return nil
+        }
+
+        return devices.first {
+            $0.id == id
+        }
+    }
+
+    func clearResults() {
+        guard !isScanning else {
+            return
+        }
+
+        devices.removeAll()
+
+        progress = 0
+        totalHosts = 0
+        scannedHosts = 0
+        onlineHosts = 0
     }
 }

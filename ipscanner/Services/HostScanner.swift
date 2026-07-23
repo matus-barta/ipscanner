@@ -42,7 +42,11 @@ nonisolated enum HostScanner {
         host: String,
         ports: [UInt16],
         timeout: TimeInterval,
-        maxConcurrentPorts: Int = 8
+        maxConcurrentPorts: Int = 8,
+
+        reverseDNSEnabled: Bool = true,
+        netBIOSEnabled: Bool = true,
+        bonjourEnabled: Bool = true
     ) async -> HostScanResult {
         var responded = false
         var openPorts = Set<UInt16>()
@@ -177,13 +181,13 @@ nonisolated enum HostScanner {
             print("\(host) ARP -> \(mac)")
         }
 
-        let reverseHostname = ReverseDNSResolver.hostname(for: host)
+        let reverseHostname = reverseDNSEnabled ? ReverseDNSResolver.hostname(for: host) : nil
 
         if let reverseHostname {
             print("\(host) reverse DNS -> \(reverseHostname)")
         }
 
-        let netBIOSHostname = reverseHostname == nil
+        let netBIOSHostname = netBIOSEnabled && reverseHostname == nil
             ? await NetBIOSResolver.hostname(for: host, timeout: 2.0)
             : nil
 
@@ -191,7 +195,7 @@ nonisolated enum HostScanner {
             print("\(host) NetBIOS -> \(netBIOSHostname)")
         }
 
-        let bonjourHostname = reverseHostname == nil && netBIOSHostname == nil
+        let bonjourHostname = bonjourEnabled && reverseHostname == nil && netBIOSHostname == nil
             ? await MainActor.run {
                 BonjourResolver.shared.hostname(for: host)
             }

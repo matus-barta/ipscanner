@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct IpScannerApp: App {
     @State private var scanner = Scanner()
+    @State private var appState = AppState()
 
     var body: some Scene {
         WindowGroup {
@@ -17,6 +18,20 @@ struct IpScannerApp: App {
         }
         .defaultSize(width: 900, height: 500)
         .windowResizability(.contentSize)
+        .commands {
+            ExportCommands(
+                scanner: scanner
+            )
+            ScannerCommands(
+                scanner: scanner,
+                appState: appState
+            )
+        }
         .environment(scanner)
+        .environment(appState)
+
+        Settings {
+            SettingsView()
+        }
     }
 }

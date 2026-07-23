@@ -44,10 +44,7 @@ private struct DeviceDetailsView: View {
 
     private var identitySection: some View {
         Section("Identity") {
-            LabeledContent("Hostname") {
-                Text(device.hostname ?? "Unknown")
-                    .textSelection(.enabled)
-            }
+            CopyableLabeledContent("Hostname", value: device.hostname)
 
             LabeledContent("Name source") {
                 if let source = device.hostnameSource {
@@ -63,17 +60,9 @@ private struct DeviceDetailsView: View {
                 }
             }
 
-            LabeledContent("IP address") {
-                Text(device.ip)
-                    .monospacedDigit()
-                    .textSelection(.enabled)
-            }
+            CopyableLabeledContent("IP address", value: device.ip, monospaced: true)
 
-            LabeledContent("MAC address") {
-                Text(device.mac ?? "Unknown")
-                    .monospaced()
-                    .textSelection(.enabled)
-            }
+            CopyableLabeledContent("MAC address", value: device.mac, monospaced: true)
 
             LabeledContent("Manufacturer") {
                 Text(device.manufacturer ?? "Unknown")

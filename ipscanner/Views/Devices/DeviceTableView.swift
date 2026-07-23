@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct DeviceTableView: View {
+    @Environment(Scanner.self) private var scanner
+
     @Binding var selection: Device.ID?
     @Binding var sortOrder: [KeyPathComparator<Device>]
 
@@ -24,12 +26,7 @@ struct DeviceTableView: View {
             ForEach(devices) { device in
                 TableRow(device)
                     .contextMenu {
-                        Button("Stuff1") {}
-                        Button("Stuff2") {}
-                        Divider()
-                        Button(role: .destructive) {} label: {
-                            Label("Delete", systemImage: "trash")
-                        }
+                        DeviceContextMenu(device: device)
                     }
             }
         }
