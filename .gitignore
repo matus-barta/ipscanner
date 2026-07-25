@@ -52,3 +52,5 @@ Tuist/Dependencies
 
 # SwiftLint cache
 .swiftlint.yml.lock
+
+out.txt
