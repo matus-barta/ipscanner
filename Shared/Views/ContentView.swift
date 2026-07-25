@@ -43,6 +43,7 @@ struct ContentView: View {
             SubnetEditorView(subnetFieldFocused: $subnetFieldFocused)
             #if os(iOS)
                 ScanStatusView()
+            Divider()
             #endif
             DeviceTableView(
                 selection: $appState.selectedDeviceID,
