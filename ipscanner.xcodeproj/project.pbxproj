@@ -7,41 +7,52 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		CA699F392E7C66D800964656 /* ipscanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ipscanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA699F392E7C66D800964656 /* IP Scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IP Scanner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA8F920F3015375C00BD4EA9 /* IP Scanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IP Scanner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CA17E21B30058AA800F6C46B /* Exceptions for "ipscanner" folder in "ipscanner" target */ = {
+		CA17E21B30058AA800F6C46B /* Exceptions for "macOS" folder in "macOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Resources/oui.csv,
-				"Scripts/generate-oui-min.py",
 			);
-			target = CA699F382E7C66D800964656 /* ipscanner */;
+			target = CA699F382E7C66D800964656 /* macOS */;
+		};
+		CA8F922330153A5900BD4EA9 /* Exceptions for "Scripts" folder in "macOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"generate-oui-min.py",
+			);
+			target = CA699F382E7C66D800964656 /* macOS */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		CA1FF1093012C3F300AC3B73 /* Exceptions for "ipscanner" folder in "Copy Bundle Resources" phase from "ipscanner" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = CA699F372E7C66D800964656 /* Resources */;
-			membershipExceptions = (
-				"Services/Scanner/Scanner+Devices.swift",
-				"Services/Scanner/Scanner+Preferences.swift",
-				"Services/Scanner/Scanner+Scanning.swift",
-				"Services/Scanner/Scanner+Subnets.swift",
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		CA699F3B2E7C66D800964656 /* ipscanner */ = {
+		CA699F3B2E7C66D800964656 /* macOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				CA17E21B30058AA800F6C46B /* Exceptions for "ipscanner" folder in "ipscanner" target */,
-				CA1FF1093012C3F300AC3B73 /* Exceptions for "ipscanner" folder in "Copy Bundle Resources" phase from "ipscanner" target */,
+				CA17E21B30058AA800F6C46B /* Exceptions for "macOS" folder in "macOS" target */,
 			);
-			path = ipscanner;
+			path = macOS;
+			sourceTree = "<group>";
+		};
+		CA8F92103015375C00BD4EA9 /* ipadOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ipadOS;
+			sourceTree = "<group>";
+		};
+		CA8F922030153A5800BD4EA9 /* Scripts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CA8F922330153A5900BD4EA9 /* Exceptions for "Scripts" folder in "macOS" target */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		CA8F928B30155D8800BD4EA9 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -54,13 +65,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CA8F920C3015375C00BD4EA9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		CA699F302E7C66D800964656 = {
 			isa = PBXGroup;
 			children = (
-				CA699F3B2E7C66D800964656 /* ipscanner */,
+				CA8F922030153A5800BD4EA9 /* Scripts */,
+				CA8F928B30155D8800BD4EA9 /* Shared */,
+				CA699F3B2E7C66D800964656 /* macOS */,
+				CA8F92103015375C00BD4EA9 /* ipadOS */,
 				CA699F3A2E7C66D800964656 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,7 +89,8 @@
 		CA699F3A2E7C66D800964656 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CA699F392E7C66D800964656 /* ipscanner.app */,
+				CA699F392E7C66D800964656 /* IP Scanner.app */,
+				CA8F920F3015375C00BD4EA9 /* IP Scanner.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -76,9 +98,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CA699F382E7C66D800964656 /* ipscanner */ = {
+		CA699F382E7C66D800964656 /* macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CA699F442E7C66D900964656 /* Build configuration list for PBXNativeTarget "ipscanner" */;
+			buildConfigurationList = CA699F442E7C66D900964656 /* Build configuration list for PBXNativeTarget "macOS" */;
 			buildPhases = (
 				F22C1E113003000C0071CDC5 /* SwiftFormat */,
 				CA699F352E7C66D800964656 /* Sources */,
@@ -90,13 +112,38 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				CA699F3B2E7C66D800964656 /* ipscanner */,
+				CA699F3B2E7C66D800964656 /* macOS */,
+				CA8F922030153A5800BD4EA9 /* Scripts */,
+				CA8F928B30155D8800BD4EA9 /* Shared */,
 			);
-			name = ipscanner;
+			name = macOS;
 			packageProductDependencies = (
 			);
 			productName = ipscanner;
-			productReference = CA699F392E7C66D800964656 /* ipscanner.app */;
+			productReference = CA699F392E7C66D800964656 /* IP Scanner.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CA8F920E3015375C00BD4EA9 /* ipadOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CA8F92173015375E00BD4EA9 /* Build configuration list for PBXNativeTarget "ipadOS" */;
+			buildPhases = (
+				CA8F920B3015375C00BD4EA9 /* Sources */,
+				CA8F920C3015375C00BD4EA9 /* Frameworks */,
+				CA8F920D3015375C00BD4EA9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CA8F92103015375C00BD4EA9 /* ipadOS */,
+				CA8F928B30155D8800BD4EA9 /* Shared */,
+			);
+			name = ipadOS;
+			packageProductDependencies = (
+			);
+			productName = "IP Scanner";
+			productReference = CA8F920F3015375C00BD4EA9 /* IP Scanner.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -106,11 +153,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2600;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					CA699F382E7C66D800964656 = {
 						CreatedOnToolsVersion = 26.0;
+					};
+					CA8F920E3015375C00BD4EA9 = {
+						CreatedOnToolsVersion = 26.6;
+						LastSwiftMigration = 2660;
 					};
 				};
 			};
@@ -128,13 +179,21 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CA699F382E7C66D800964656 /* ipscanner */,
+				CA699F382E7C66D800964656 /* macOS */,
+				CA8F920E3015375C00BD4EA9 /* ipadOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		CA699F372E7C66D800964656 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CA8F920D3015375C00BD4EA9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -166,6 +225,13 @@
 
 /* Begin PBXSourcesBuildPhase section */
 		CA699F352E7C66D800964656 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CA8F920B3015375C00BD4EA9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -326,14 +392,14 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "IP Scanner";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "IP Scanner uses the local network to discover devices and identify available services.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matusbarta.ipscanner;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "IP Scanner";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -371,14 +437,14 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "IP Scanner";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "IP Scanner uses the local network to discover devices and identify available services.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.matusbarta.ipscanner;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "IP Scanner";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -386,6 +452,90 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		CA8F92183015375E00BD4EA9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = IP_Scanner;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "IP-Scanner-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "IP Scanner";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "IP Scanner uses the local network to discover devices and identify available services.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.matusbarta.IP-Scanner";
+				PRODUCT_NAME = "IP Scanner";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		CA8F92193015375E00BD4EA9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = IP_Scanner;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "IP-Scanner-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "IP Scanner";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "IP Scanner uses the local network to discover devices and identify available services.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.matusbarta.IP-Scanner";
+				PRODUCT_NAME = "IP Scanner";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -401,11 +551,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CA699F442E7C66D900964656 /* Build configuration list for PBXNativeTarget "ipscanner" */ = {
+		CA699F442E7C66D900964656 /* Build configuration list for PBXNativeTarget "macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA699F452E7C66D900964656 /* Debug */,
 				CA699F462E7C66D900964656 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CA8F92173015375E00BD4EA9 /* Build configuration list for PBXNativeTarget "ipadOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA8F92183015375E00BD4EA9 /* Debug */,
+				CA8F92193015375E00BD4EA9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
