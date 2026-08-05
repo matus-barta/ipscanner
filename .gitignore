@@ -3,29 +3,29 @@
 
 # Xcode user data
 **/xcuserdata/
-**/*.xcuserdatad
+**/*.xcuserdatad/
 **/*.xcuserstate
 
 # Xcode build products
 DerivedData/
 build/
+*.xcarchive
 
 # Swift Package Manager
 .build/
 Packages/
-Package.resolved
 
-# Playground
+# Keep Package.resolved committed for reproducible app builds
+# Package.resolved
+
+# Playgrounds
 timeline.xctimeline
 playground.xcworkspace
-
-# Archives
-*.xcarchive
 
 # SourceKit
 .sourcekit-lsp/
 
-# Fastlane
+# Fastlane generated output
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/
@@ -37,15 +37,12 @@ Pods/
 # Carthage
 Carthage/Build/
 
-# Tuist
-Tuist/.build
-Tuist/Dependencies
+# Tuist generated files
+Tuist/.build/
+Tuist/Dependencies/
 
 # Mint
 .mint/
-
-# Periphery
-.periphery.yml
 
 # SwiftFormat cache
 .swiftformat.cache
@@ -53,4 +50,20 @@ Tuist/Dependencies
 # SwiftLint cache
 .swiftlint.yml.lock
 
+# Local secrets and configuration
+.env
+.env.*
+!.env.example
+Secrets.xcconfig
+*.xcconfig.local
+
+# Signing credentials and provisioning profiles
+*.p12
+*.cer
+*.mobileprovision
+*.provisionprofile
+AuthKey_*.p8
+
+# Temporary output files
 out.txt
+Scripts/out.txt

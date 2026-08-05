@@ -3,6 +3,8 @@
 //  ipscanner
 //
 //  Created by Matúš Barta on 23/07/2026.
+//  SPDX-License-Identifier: GPL-3.0-only
+//  App Store exception: see APP_STORE_EXCEPTION.md.
 //
 
 import AppKit

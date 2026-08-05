@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CA8F920E3015375C00BD4EA9"
-               BuildableName = "ipadOS.app"
+               BuildableName = "IP Scanner.app"
                BlueprintName = "ipadOS"
                ReferencedContainer = "container:ipscanner.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CA8F920E3015375C00BD4EA9"
-            BuildableName = "ipadOS.app"
+            BuildableName = "IP Scanner.app"
             BlueprintName = "ipadOS"
             ReferencedContainer = "container:ipscanner.xcodeproj">
          </BuildableReference>
@@ -63,7 +63,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CA8F920E3015375C00BD4EA9"
-            BuildableName = "ipadOS.app"
+            BuildableName = "IP Scanner.app"
             BlueprintName = "ipadOS"
             ReferencedContainer = "container:ipscanner.xcodeproj">
          </BuildableReference>

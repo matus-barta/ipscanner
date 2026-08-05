@@ -3,6 +3,8 @@
 //  ipscanner
 //
 //  Created by Matúš Barta on 13/07/2026.
+//  SPDX-License-Identifier: GPL-3.0-only
+//  App Store exception: see APP_STORE_EXCEPTION.md.
 //
 
 import Foundation
@@ -60,6 +62,10 @@ nonisolated enum MacVendorResolver {
         var result: [UInt32: String] = [:]
 
         for line in content.split(whereSeparator: \.isNewline) {
+            guard !line.hasPrefix("#")
+            else {
+                continue
+            }
             let parts = line.split(
                 separator: "\t",
                 maxSplits: 1
